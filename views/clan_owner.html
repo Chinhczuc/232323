@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>Quản lý Gia tộc</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="navbar">
+    <div><a href="/">Trang chủ</a> <a href="/clans">Danh sách Gia tộc</a></div>
+    <div id="auth-buttons"></div>
+  </div>
+  <div class="container">
+    <h2>Đơn xin gia nhập đang chờ duyệt</h2>
+    <div id="requests"></div>
+  </div>
+  <script>
+    // Hiển thị nút đăng nhập/đăng xuất
+    fetch('/api/me').then(r=>r.json()).then(data=>{
+      if(data.loggedIn) {
+        document.getElementById('auth-buttons').innerHTML = `Chào, <b>${data.name}</b> | <a href="/logout">Đăng xuất</a>`;
+      }
+    });
+    // Lấy danh sách đơn
+    fetch('/api/requests').then(r=>r.json()).then(data=>{
+      if(!data.success) return document.getElementById('requests').innerText = 'Lỗi tải dữ liệu!';
+      let html = '<ul>';
+      data.requests.forEach(r=>{
+        html += `<li>${r.name} (${r.discord_id}) - <b>${r.status}</b>
+        <button onclick="duyet(${r.id})">Duyệt</button>
+        <button onclick="tuChoi(${r.id})">Từ chối</button></li>`;
+      });
+      html += '</ul>';
+      document.getElementById('requests').innerHTML = html;
+    });
+    function duyet(id){
+      fetch('/api/requests/'+id+'/approve', {method:'POST'}).then(()=>location.reload());
+    }
+    function tuChoi(id){
+      let lydo = prompt('Nhập lý do từ chối');
+      fetch('/api/requests/'+id+'/reject', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({message: lydo})
+      }).then(()=>location.reload());
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>Trang chủ - Gia Tộc GTA RP</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="navbar">
+    <div><a href="/">Trang chủ</a> <a href="/clans">Danh sách Gia tộc</a></div>
+    <div><a href="/login">Đăng nhập</a></div>
+  </div>
+  <div class="banner">
+    <h1>Chào mừng đến với Hệ Thống Quản Lý Gia Tộc GTA FiveM Roleplay</h1>
+    <p>Quản lý thành viên, hoạt động, cấp bậc minh bạch!</p>
+    <a href="/register"><button class="button-main">Tham gia gia nhập</button></a>
+  </div>
+  <div class="container">
+    <h3>Tổng quan hệ thống</h3>
+    <ul>
+      <li>Số lượng gia tộc: <span id="clan-count">...</span></li>
+      <li>Số lượng thành viên: <span id="member-count">...</span></li>
+      <li>Thông báo: <span style="color:yellow">Beta v1, thử nghiệm!</span></li>
+    </ul>
+  </div>
+  <script>
+    fetch('/api/clans').then(r=>r.json()).then(d=>{
+      document.getElementById('clan-count').innerText = d.clans.length;
+      // Đếm số lượng thành viên: Đơn giản hoá
+      fetch('/api/clans').then(r2=>r2.json()).then(d2=>{
+        let allPromises = d2.clans.map(c=>fetch('/api/clan/'+c.id).then(r=>r.json()));
+        Promise.all(allPromises).then(arr=>{
+          let total = arr.reduce((sum,clan)=>sum+(clan.members?clan.members.length:0),0);
+          document.getElementById('member-count').innerText = total;
+        });
+      });
+    });
+  </script>
+</body>
+</html>

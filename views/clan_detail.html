@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>Chi tiết Gia tộc</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="navbar">
+    <div><a href="/">Trang chủ</a> <a href="/clans">Danh sách Gia tộc</a></div>
+    <div><a href="/login">Đăng nhập</a></div>
+  </div>
+  <div class="container" id="clan-detail">
+    Đang tải...
+  </div>
+  <script>
+    const id = window.location.pathname.split('/').pop();
+    fetch('/api/clan/' + id).then(r=>r.json()).then(data=>{
+      if (!data.success) return document.getElementById('clan-detail').innerText = "Không tìm thấy gia tộc!";
+      let clan = data.clan;
+      let html = `<h2>${clan.name}</h2>
+        <p>${clan.description||''}</p>
+        <h4>Thành viên:</h4>
+        <ul>${data.members.map(m=>`<li>${m.name} - ${m.role||'Thành viên'}</li>`).join('')}</ul>
+        <h4>Thông báo:</h4>
+        <ul>${(data.announcements||[]).map(a=>`<li>${a.content}</li>`).join('')}</ul>`;
+      document.getElementById('clan-detail').innerHTML = html;
+    });
+  </script>
+</body>
+</html>

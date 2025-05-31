@@ -1,0 +1,70 @@
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  margin: 0; padding: 0;
+  background: #18191a;
+  color: #fff;
+}
+.header {
+  background: #23272b;
+  padding: 20px; text-align: center;
+}
+.button-main {
+  background: #009933;
+  color: #fff; border: none;
+  padding: 12px 24px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+.button-main:hover {
+  background: #006622;
+}
+input,select,textarea {
+  width: 100%; padding: 8px;
+  margin: 5px 0 15px 0;
+  border-radius: 4px; border: 1px solid #333;
+}
+.container {
+  max-width: 600px;
+  background: #242526;
+  margin: 24px auto;
+  border-radius: 10px;
+  padding: 32px;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.2);
+}
+.navbar {
+  display: flex;
+  background: #2d2f32;
+  padding: 10px 16px;
+  justify-content: space-between;
+}
+.navbar a {
+  color: #fff;
+  margin: 0 12px;
+  text-decoration: none;
+}
+.banner {
+  background: url('/images/banner.jpg') center/cover no-repeat;
+  color: #fff;
+  padding: 60px 0 40px 0;
+  text-align: center;
+  border-radius: 12px 12px 0 0;
+}
+@media (max-width: 700px) {
+  .container {padding: 12px;}
+  .banner {padding: 20px 0 10px 0;}
+}/* CSS chính */
+body { font-family: Arial, sans-serif; background-color: #111; color: #fff; }
+
+:root {
+  --bg: #18191a;
+  --text: #fff;
+  --container: #242526;
+}
+body { background: var(--bg); color: var(--text);}
+.container { background: var(--container); }
+body.light {
+  --bg: #fff;
+  --text: #222;
+  --container: #f8f8f8;
+}

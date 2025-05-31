@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>Trang admin</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="navbar">
+    <div><a href="/">Trang chủ</a> <a href="/clans">Danh sách Gia tộc</a></div>
+    <div id="auth-buttons"></div>
+  </div>
+  <div class="container">
+    <h2>Quản trị toàn hệ thống</h2>
+    <div id="admin-panel"></div>
+  </div>
+  <script>
+    fetch('/api/me').then(r=>r.json()).then(data=>{
+      if(data.loggedIn) {
+        document.getElementById('auth-buttons').innerHTML = `Chào, <b>${data.name}</b> | <a href="/logout">Đăng xuất</a>`;
+      }
+    });
+    // Lấy dữ liệu admin
+    fetch('/api/admin/data').then(r=>r.json()).then(data=>{
+      if(!data.success) return document.getElementById('admin-panel').innerText = 'Lỗi tải!';
+      let html = '<h4>Thành viên</h4><ul>';
+      data.users.forEach(u=>{
+        html += `<li>${u.name} [${u.role}] <button onclick="setRole(${u.id},'admin')">Set Admin</button> <button onclick="setRole(${u.id},'clan_owner')">Set Chủ clan</button> <button onclick="setRole(${u.id},'member')">Set Member</button></li>`;
+      });
+      html += '</ul><h4>Gia tộc</h4><ul>';
+      data.clans.forEach(c=>{
+        html += `<li>${c.name} - <button onclick="xoaClan(${c.id})">Xóa</button></li>`;
+      });
+      html += '</ul>';
+      document.getElementById('admin-panel').innerHTML = html;
+    });
+    function setRole(id,role){
+      fetch('/api/admin/setrole/'+id, {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({role})}).then(()=>location.reload());
+    }
+    function xoaClan(id){
+      if(confirm('Bạn chắc chắn xóa clan này?')) fetch('/api/admin/deleteclan/'+id, {method:'POST'}).then(()=>location.reload());
+    }
+  </script>
+</body>
+</html>

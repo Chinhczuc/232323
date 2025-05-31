@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>Đăng ký thành viên RP</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="navbar">
+    <div><a href="/">Trang chủ</a> <a href="/clans">Danh sách Gia tộc</a></div>
+    <div><a href="/login">Đăng nhập</a></div>
+  </div>
+  <div class="container">
+    <h2>Form Đăng Ký Gia Nhập Gia Tộc</h2>
+    <form id="register-form" enctype="multipart/form-data">
+      <label>Họ tên RP:</label>
+      <input name="name" required />
+      <label>Số điện thoại liên hệ:</label>
+      <input name="phone" />
+      <label>ID Discord (bắt buộc):</label>
+      <input name="discord_id" required />
+      <label>Tuổi:</label>
+      <input name="age" type="number" required min="10" />
+      <label>Tiểu sử nhân vật:</label>
+      <textarea name="bio"></textarea>
+      <label>Lý do muốn gia nhập:</label>
+      <textarea name="reason"></textarea>
+      <label>Chọn Gia tộc muốn xin vào:</label>
+      <select name="clan_id" id="clan-select"></select>
+      <label>Ảnh đại diện:</label>
+      <input type="file" name="avatar" accept="image/*" />
+      <label><input type="checkbox" required /> Tôi xác nhận tuân thủ quy định RP</label>
+      <button type="submit" class="button-main">Nộp đơn</button>
+    </form>
+    <div id="register-result"></div>
+  </div>
+  <script>
+    // Tải danh sách clan
+    fetch('/api/clans').then(r=>r.json()).then(data=>{
+      let sel = document.getElementById('clan-select');
+      data.clans.forEach(clan=>{
+        let op = document.createElement('option');
+        op.value = clan.id; op.innerText = clan.name;
+        sel.appendChild(op);
+      });
+    });
+    // Xử lý form
+    document.getElementById('register-form').onsubmit = function(e) {
+      e.preventDefault();
+      let form = e.target;
+      let fd = new FormData(form);
+      // Đơn giản: Không xử lý upload ảnh thật, chỉ lưu tên file
+      fetch('/api/register', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({
+          name: fd.get('name'),
+          phone: fd.get('phone'),
+          discord_id: fd.get('discord_id'),
+          age: fd.get('age'),
+          bio: fd.get('bio'),
+          reason: fd.get('reason'),
+          clan_id: fd.get('clan_id'),
+          avatar: fd.get('avatar') ? fd.get('avatar').name : ''
+        })
+      }).then(r=>r.json()).then(d=>{
+        document.getElementById('register-result').innerText = d.success ? "Đã gửi đơn thành công! Chờ duyệt." : "Lỗi: " + d.error;
+      });
+    }
+  </script>
+</body>
+</html>

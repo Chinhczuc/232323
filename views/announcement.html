@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>Thông báo nội bộ</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="navbar">
+    <div><a href="/">Trang chủ</a> <a href="/clans">Danh sách Gia tộc</a></div>
+    <div id="auth-buttons"></div>
+  </div>
+  <div class="container">
+    <h2>Gửi thông báo tới thành viên</h2>
+    <form id="ann-form">
+      <textarea name="content" required></textarea>
+      <button type="submit" class="button-main">Gửi</button>
+    </form>
+    <div id="ann-list"></div>
+  </div>
+  <script>
+    fetch('/api/me').then(r=>r.json()).then(data=>{
+      if(data.loggedIn) {
+        document.getElementById('auth-buttons').innerHTML = `Chào, <b>${data.name}</b> | <a href="/logout">Đăng xuất</a>`;
+      }
+    });
+    document.getElementById('ann-form').onsubmit = function(e){
+      e.preventDefault();
+      let content = this.content.value;
+      fetch('/api/announcement',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({content})}).then(()=>location.reload());
+    }
+    fetch('/api/announcement').then(r=>r.json()).then(data=>{
+      let html = '<ul>';
+      data.list.forEach(a=>html += `<li>${a.content} (${a.created_at})</li>`);
+      html += '</ul>';
+      document.getElementById('ann-list').innerHTML = html;
+    });
+  </script>
+</body>
+</html>

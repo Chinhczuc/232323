@@ -1,0 +1,25 @@
+<div class="navbar">
+  <div>
+    <a href="/">Trang chủ</a>
+    <a href="/clans">Danh sách Gia tộc</a>
+  </div>
+  <div id="auth-buttons" style="display:inline"></div>
+  <button onclick="toggleTheme()" style="margin-left:12px;">Đổi theme</button>
+</div>
+<script>
+  fetch('/api/me').then(r=>r.json()).then(data=>{
+    if(data.loggedIn) {
+      document.getElementById('auth-buttons').innerHTML = `Chào, <b>${data.name}</b> | <a href="/logout">Đăng xuất</a>`;
+    } else {
+      document.getElementById('auth-buttons').innerHTML = `<a href="/auth/discord"><img src="https://cdn.jsdelivr.net/gh/Chinhczuc/discord-login-btn/discord.svg" style="height:24px;vertical-align:middle;"> Đăng nhập Discord</a>`;
+    }
+  });
+
+  function toggleTheme(){
+    document.body.classList.toggle('light');
+    localStorage.setItem('theme', document.body.classList.contains('light') ? 'light' : '');
+  }
+  window.onload = function(){
+    if(localStorage.getItem('theme')==='light') document.body.classList.add('light');
+  }
+</script>
